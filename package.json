@@ -1,0 +1,21 @@
+{
+  "name": "state-management-comparison",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "context": "pnpm --filter context-app dev",
+    "zustand": "pnpm --filter zustand-app dev"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.16",
+    "typescript": "^5.2.2"
+  },
+  "packageManager": "pnpm@8.10.0"
+}
