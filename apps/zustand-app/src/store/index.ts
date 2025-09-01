@@ -28,10 +28,6 @@ interface AppStore {
   preferences: UserPreferences;
   toggleTheme: () => void;
   toggleCurrency: () => void;
-  
-  // Ticker slice
-  tickerValue: number;
-  setTickerValue: (value: number) => void;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -172,8 +168,7 @@ export const useAppStore = create<AppStore>()(
           },
 
           // Ticker slice
-          tickerValue: 12547,
-          setTickerValue: (value: number) => set({ tickerValue: value })
+          // Ticker moved to a separate store
         };
       }),
       {
@@ -207,19 +202,22 @@ export const useCart = () => useAppStore(state => ({
   clearCart: state.clearCart
 }));
 
-export const usePreferences = () => useAppStore(state => ({
-  preferences: state.preferences,
-  toggleTheme: state.toggleTheme,
-  toggleCurrency: state.toggleCurrency
-}));
+export const usePreferences = () => useAppStore(
+  state => ({
+    preferences: state.preferences,
+    toggleTheme: state.toggleTheme,
+    toggleCurrency: state.toggleCurrency
+  }),
+  // Use shallow comparison for object equality
+  (a, b) => 
+    a.preferences.theme === b.preferences.theme && 
+    a.preferences.currency === b.preferences.currency
+);
 
-export const useTicker = () => useAppStore(state => ({
-  tickerValue: state.tickerValue,
-  setTickerValue: state.setTickerValue
-}));
+// Ticker functionality moved to tickerStore.ts
 
-// Individual selectors for minimal re-renders
-export const useCartCount = () => useAppStore(state => state.cart.itemCount);
-export const useTheme = () => useAppStore(state => state.preferences.theme);
-export const useCurrency = () => useAppStore(state => state.preferences.currency);
-export const useTickerValue = () => useAppStore(state => state.tickerValue);
+// Individual selectors for minimal re-renders with strict equality to prevent unnecessary re-renders
+export const useCartCount = () => useAppStore(state => state.cart.itemCount, (a, b) => a === b);
+export const useTheme = () => useAppStore(state => state.preferences.theme, (a, b) => a === b);
+export const useCurrency = () => useAppStore(state => state.preferences.currency, (a, b) => a === b);
+// Ticker functionality moved to tickerStore.ts

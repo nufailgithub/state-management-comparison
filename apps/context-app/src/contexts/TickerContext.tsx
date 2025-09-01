@@ -12,7 +12,7 @@ export const TickerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   useEffect(() => {
     const interval = setInterval(() => {
       setTickerValue(prev => prev + Math.floor(Math.random() * 10) + 1);
-    }, 100); // Updates every 100ms - this will stress test the state management
+    }, 1); // Updates every 100ms - this will stress test the state management
 
     return () => clearInterval(interval);
   }, []);

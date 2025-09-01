@@ -1,14 +1,19 @@
 import { useEffect } from 'react';
-import { useAppStore } from '../store';
+import { useTickerStore } from '../store/tickerStore';
 
 export const useTickerEffect = () => {
-  const setTickerValue = useAppStore(state => state.setTickerValue);
-
+  // We don't need to use the selector here since we're only using it for the effect
+  // This prevents unnecessary re-renders of components using this hook
+  
   useEffect(() => {
     const interval = setInterval(() => {
-      setTickerValue(useAppStore.getState().tickerValue + Math.floor(Math.random() * 10) + 1);
-    }, 100); // Same 100ms interval as Context version
+      // Directly update state with a function similar to useState pattern
+      // This avoids the overhead of getState + setState
+      useTickerStore.setState(state => ({ 
+        tickerValue: state.tickerValue + Math.floor(Math.random() * 10) + 1 
+      }));
+    }, 1); // Same interval as Context version (1ms)
 
     return () => clearInterval(interval);
-  }, [setTickerValue]);
+  }, []);
 };
