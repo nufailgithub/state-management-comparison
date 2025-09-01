@@ -2,18 +2,24 @@ import { useEffect } from 'react';
 import { useTickerStore } from '../store/tickerStore';
 
 export const useTickerEffect = () => {
-  // We don't need to use the selector here since we're only using it for the effect
-  // This prevents unnecessary re-renders of components using this hook
+  // Get the incrementTickerValue action directly to avoid any selector overhead
+  const incrementTickerValue = useTickerStore(state => state.incrementTickerValue);
   
   useEffect(() => {
-    const interval = setInterval(() => {
-      // Directly update state with a function similar to useState pattern
-      // This avoids the overhead of getState + setState
-      useTickerStore.setState(state => ({ 
-        tickerValue: state.tickerValue + Math.floor(Math.random() * 10) + 1 
-      }));
-    }, 1); // Same interval as Context version (1ms)
+    // Use requestAnimationFrame instead of setInterval for better performance
+    // This will sync with browser's render cycle for smoother updates
+    let animationFrameId: number;
+    
+    const updateTicker = () => {
+      incrementTickerValue();
+      animationFrameId = requestAnimationFrame(updateTicker);
+    };
+    
+    // Start the animation frame loop
+    animationFrameId = requestAnimationFrame(updateTicker);
+    
+    // Cleanup function to cancel the animation frame
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [incrementTickerValue]);
+}
 
-    return () => clearInterval(interval);
-  }, []);
-};

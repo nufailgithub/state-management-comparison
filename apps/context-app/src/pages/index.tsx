@@ -3,8 +3,10 @@ import { Layout } from '../components/Layout';
 import { useProducts } from '../contexts/ProductsContext';
 import { useCart } from '../contexts/CartContext';
 import { usePreferences } from '../contexts/PreferencesContext';
-import { ProductCard, SearchBar, useRenderCount } from '@shared/ui';
+import { useRenderCount } from '@shared/ui';
 import { formatCurrency } from '@shared/core/utils/currency';
+import { ProductCardWrapper } from '../components/ProductCardWrapper';
+import { SearchBarWrapper } from '../components/SearchBarWrapper';
 // import { formatCurrency } from '@shared/core/utils';
 
 const CatalogPage: React.FC = () => {
@@ -42,23 +44,21 @@ const CatalogPage: React.FC = () => {
           </p>
         </div>
 
-        <SearchBar
+        <SearchBarWrapper
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
           categories={categories}
-          renderCount={useRenderCount('SearchBar')}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map(product => (
-            <ProductCard
+            <ProductCardWrapper
               key={product.id}
               product={product}
               onAddToCart={handleAddToCart}
               formatPrice={formatPrice}
-              renderCount={useRenderCount(`ProductCard-${product.id}`)}
             />
           ))}
         </div>

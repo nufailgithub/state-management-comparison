@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 
 interface TickerContextType {
   tickerValue: number;
@@ -10,11 +10,19 @@ export const TickerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [tickerValue, setTickerValue] = useState(12547);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    // Use requestAnimationFrame for more consistent, smoother updates
+    let animationFrameId: number;
+    
+    const updateTicker = () => {
       setTickerValue(prev => prev + Math.floor(Math.random() * 10) + 1);
-    }, 1); // Updates every 100ms - this will stress test the state management
-
-    return () => clearInterval(interval);
+      animationFrameId = requestAnimationFrame(updateTicker);
+    };
+    
+    // Start the animation frame loop for smoother updates
+    animationFrameId = requestAnimationFrame(updateTicker);
+    
+    // Cleanup function
+    return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
   return (
